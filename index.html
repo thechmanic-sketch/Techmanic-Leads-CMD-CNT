@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Techmanic LEADS CMD CNT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0d1117;
+  --panel:#161c2a;
+  --card:#1c2438;
+  --hover:#222c40;
+  --border:#2a3450;
+  --border2:#36435e;
+  --text:#e4eaf6;
+  --muted:#7d8eaa;
+  --muted2:#4d5c78;
+  --accent:#39d98a;
+  --accent2:#22c474;
+  --hot:#ff5e6c;
+  --warm:#ffbe0b;
+  --cold:#4dabf7;
+  --won:#39d98a;
+  --lost:#4d5c78;
+  --r:12px;
+  --r2:8px;
+  --sh:0 20px 60px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.hidden{display:none!important}
+button{cursor:pointer;font-family:'DM Sans',sans-serif}
+select,input,textarea{font-family:'DM Sans',sans-serif}
+
+/* ── Layout ── */
+#app{display:grid;grid-template-columns:220px 1fr;height:100vh}
+
+/* ── Sidebar ── */
+.sidebar{
+  background:var(--panel);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:20px 14px;gap:6px;overflow-y:auto;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.brand-icon{width:36px;height:36px;border-radius:10px;object-fit:contain;background:#000;flex-shrink:0}
+.brand-text{font-family:'Outfit';font-weight:700;font-size:15px;line-height:1.2}
+.brand-sub{font-size:11px;color:var(--muted);font-weight:400}
+.nav-btn{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  background:transparent;border:0;color:var(--muted);font-size:13.5px;font-weight:500;
+  padding:10px 12px;border-radius:var(--r2);transition:.15s;
+}
+.nav-btn svg{width:16px;height:16px;flex-shrink:0;opacity:.7}
+.nav-btn:hover{background:var(--card);color:var(--text)}
+.nav-btn.active{background:var(--card);color:var(--text);font-weight:600}
+.nav-btn.active svg{opacity:1}
+.nav-btn.active::before{content:"";width:3px;height:16px;background:var(--accent);border-radius:2px;position:absolute;left:2px}
+.nav-btn{position:relative}
+.sidebar-footer{margin-top:auto;padding-top:16px;border-top:1px solid var(--border)}
+.import-btn{width:100%;background:var(--card);border:1px dashed var(--border2);color:var(--muted);font-size:12px;padding:9px;border-radius:var(--r2);transition:.15s}
+.import-btn:hover{color:var(--accent);border-color:var(--accent)}
+
+/* ── Main ── */
+.main{overflow-y:auto;padding:28px 32px 60px;display:flex;flex-direction:column;gap:0}
+.view{animation:fadein .2s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.view-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px}
+.view-title{font-family:'Outfit';font-size:26px;font-weight:700;letter-spacing:-.02em}
+.view-sub{font-size:13px;color:var(--muted);margin-top:2px}
+
+/* ── Buttons ── */
+.btn{font-family:'DM Sans';font-weight:600;font-size:13.5px;border-radius:var(--r2);padding:9px 16px;border:1px solid transparent;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--accent);color:#072716;border-color:var(--accent2)}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
+.btn-ghost{background:var(--card);border-color:var(--border2);color:var(--text)}
+.btn-ghost:hover{background:var(--hover);border-color:var(--border2)}
+.btn-danger{background:rgba(255,94,108,.12);border-color:rgba(255,94,108,.3);color:var(--hot)}
+.btn-danger:hover{background:rgba(255,94,108,.2)}
+.btn-sm{padding:6px 11px;font-size:12.5px}
+
+/* ── Metrics ── */
+.metrics{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:22px}
+.metric{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:16px 14px 14px;position:relative;overflow:hidden}
+.metric-bar{position:absolute;top:0;left:0;right:0;height:3px}
+.metric-bar.green{background:var(--accent)}
+.metric-bar.red{background:var(--hot)}
+.metric-bar.yellow{background:var(--warm)}
+.metric-bar.blue{background:var(--cold)}
+.metric-bar.grey{background:var(--muted2)}
+.metric-val{font-family:'JetBrains Mono';font-weight:700;font-size:28px;margin:6px 0 4px}
+.metric-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+
+/* ── Panel / cards ── */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:18px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--border)}
+.panel-title{font-family:'Outfit';font-size:15px;font-weight:600}
+
+/* ── Toolbar ── */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.search-input{flex:1;min-width:200px;background:var(--panel);border:1px solid var(--border);color:var(--text);font-size:13.5px;padding:9px 13px;border-radius:var(--r2);outline:none;transition:.15s}
+.search-input::placeholder{color:var(--muted)}
+.search-input:focus{border-color:var(--accent)}
+.filter-select{background:var(--panel);border:1px solid var(--border);color:var(--text);font-size:13px;padding:9px 10px;border-radius:var(--r2);outline:none;cursor:pointer;transition:.15s}
+.filter-select:focus{border-color:var(--accent)}
+
+/* ── Table ── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead th{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted2);font-weight:700;padding:11px 16px;text-align:left;background:var(--card);border-bottom:1px solid var(--border)}
+tbody td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--hover)}
+.biz-name{font-weight:600;font-size:14px}
+.biz-loc{font-size:12px;color:var(--muted);margin-top:1px}
+.actions{display:flex;gap:5px}
+.icon-btn{width:30px;height:30px;border-radius:7px;background:var(--card);border:1px solid var(--border);color:var(--muted);font-size:13px;display:grid;place-items:center;transition:.15s}
+.icon-btn:hover{background:var(--hover);color:var(--text);border-color:var(--border2)}
+.icon-btn.wa-btn:hover{color:var(--accent);border-color:var(--accent)}
+.icon-btn.del-btn:hover{color:var(--hot);border-color:var(--hot)}
+.status-sel{background:var(--card);border:1px solid var(--border);color:var(--text);font-size:12.5px;padding:5px 8px;border-radius:7px;font-weight:500;cursor:pointer;font-family:'DM Sans'}
+
+/* ── Pills ── */
+.pill{display:inline-flex;align-items:center;font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:100px;white-space:nowrap}
+.pill.hot{background:rgba(255,94,108,.14);color:var(--hot)}
+.pill.warm{background:rgba(255,190,11,.14);color:var(--warm)}
+.pill.cold{background:rgba(77,171,247,.14);color:var(--cold)}
+.ws-badge{font-size:12px;font-weight:600}
+.ws-none{color:var(--hot)}
+.ws-social{color:var(--warm)}
+.ws-has{color:var(--muted)}
+.ws-broken{color:var(--hot)}
+
+/* ── Dashboard follow-up ── */
+.fu-list{display:flex;flex-direction:column}
+.fu-row{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:.12s}
+.fu-row:last-child{border-bottom:none}
+.fu-row:hover{background:var(--hover)}
+.fu-name{font-weight:600;font-size:14px}
+.fu-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.fu-due{font-family:'JetBrains Mono';font-size:12px;font-weight:700}
+.fu-due.overdue{color:var(--hot)}
+.fu-due.soon{color:var(--warm)}
+.fu-due.ok{color:var(--accent)}
+.empty-state{padding:40px;text-align:center;color:var(--muted);font-size:14px}
+
+/* ── Pipeline ── */
+.board{display:grid;grid-template-columns:repeat(7,minmax(170px,1fr));gap:10px;overflow-x:auto;padding-bottom:4px}
+.col{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:10px;min-height:240px;transition:.15s}
+.col.dragover{border-color:var(--accent);background:var(--hover)}
+.col-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:2px 4px}
+.col-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.col-count{background:var(--card);border-radius:100px;padding:2px 8px;font-family:'JetBrains Mono';font-size:11px;color:var(--text)}
+.k-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:11px;margin-bottom:7px;cursor:grab;transition:.15s}
+.k-card:hover{border-color:var(--border2);background:var(--hover)}
+.k-card:active{cursor:grabbing}
+.k-card.dragging{opacity:.4}
+.k-name{font-weight:600;font-size:13px;margin-bottom:5px}
+.k-meta{display:flex;gap:5px;flex-wrap:wrap}
+
+/* ── Modals ── */
+.backdrop{position:fixed;inset:0;background:rgba(5,8,18,.75);backdrop-filter:blur(6px);display:grid;place-items:center;z-index:100;padding:20px;animation:fadein .15s}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:var(--sh);position:relative}
+.modal.wide{max-width:700px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:20px 22px;border-bottom:1px solid var(--border)}
+.modal-title{font-family:'Outfit';font-size:19px;font-weight:700;letter-spacing:-.01em}
+.modal-body{padding:22px}
+.close-btn{width:32px;height:32px;border-radius:8px;background:var(--card);border:1px solid var(--border);color:var(--muted);font-size:14px;display:grid;place-items:center;transition:.15s}
+.close-btn:hover{color:var(--text);background:var(--hover)}
+.modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:16px 22px;border-top:1px solid var(--border)}
+
+/* ── Forms ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid .span2{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.field input,.field select,.field textarea{background:var(--card);border:1px solid var(--border);color:var(--text);font-size:13.5px;padding:9px 12px;border-radius:var(--r2);outline:none;transition:.15s;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(57,217,138,.1)}
+.field textarea{resize:vertical;min-height:80px}
+
+/* ── Lead detail ── */
+.ld-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.ld-field{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:10px 13px}
+.ld-key{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);font-weight:700;margin-bottom:3px}
+.ld-val{font-size:14px;word-break:break-word}
+.ld-val a{color:var(--accent);text-decoration:none}
+.section-title{font-family:'Outfit';font-size:14px;font-weight:600;margin:18px 0 8px}
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--border)}
+.tl-item:last-child{border-bottom:none}
+.tl-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:5px;flex-shrink:0}
+.tl-text{font-size:13.5px}
+.tl-time{font-size:11px;color:var(--muted2);font-family:'JetBrains Mono';margin-top:2px}
+.msg-item{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:10px 13px;margin-bottom:8px}
+.msg-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--muted2);font-family:'JetBrains Mono';margin-bottom:5px}
+.msg-text{font-size:13px;white-space:pre-wrap;line-height:1.5}
+
+/* ── WhatsApp modal ── */
+.wa-preview{margin-top:14px;background:#0b1a12;border:1px solid #1a3a25;border-radius:var(--r2);padding:16px;min-height:80px}
+.wa-bubble{background:#1f5c38;color:#d9fdd3;padding:10px 13px;border-radius:12px 12px 2px 12px;max-width:85%;font-size:13.5px;line-height:1.5;white-space:pre-wrap;display:inline-block}
+.wa-label{font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+
+/* ── Toast ── */
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border2);color:var(--text);padding:11px 20px;border-radius:var(--r);font-size:13.5px;font-weight:600;box-shadow:var(--sh);z-index:200;pointer-events:none;transition:opacity .3s}
+#toast.t-ok{border-color:var(--accent);color:var(--accent)}
+#toast.t-err{border-color:var(--hot);color:var(--hot)}
+
+/* ── Import modal ── */
+.import-area{width:100%;min-height:100px;background:var(--card);border:1px solid var(--border);color:var(--text);font-size:12.5px;padding:10px;border-radius:var(--r2);font-family:'JetBrains Mono';outline:none;resize:vertical}
+.import-area:focus{border-color:var(--accent)}
+
+/* ── Login ── */
+.login-screen{position:fixed;inset:0;background:var(--bg);display:grid;place-items:center;z-index:500;padding:20px}
+.login-card{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:36px 32px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.6);display:flex;flex-direction:column;align-items:center;gap:0}
+.login-logo{width:64px;height:64px;border-radius:14px;object-fit:contain;background:#000;margin-bottom:18px}
+.login-title{font-family:'Outfit';font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.login-error{background:rgba(255,94,108,.12);border:1px solid rgba(255,94,108,.3);color:var(--hot);font-size:13px;padding:10px 13px;border-radius:9px;margin-bottom:14px;width:100%;text-align:center}
+.login-field{width:100%;margin-bottom:14px}
+.login-field label{display:block;font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.login-field input{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);font-size:14px;padding:11px 13px;border-radius:10px;outline:none;transition:.15s}
+.login-field input:focus{border-color:var(--accent)}
+.login-btn{width:100%;margin-top:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#072716;font-weight:700;font-size:15px;padding:13px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans';transition:.15s}
+.login-btn:hover{filter:brightness(1.05)}
+.login-btn:disabled{opacity:.6;cursor:default}
+/* ── User badge ── */
+.user-badge{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:9px;margin-top:auto;margin-bottom:8px}
+.user-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-size:11px;font-weight:700;color:#072716;flex-shrink:0}
+.user-info{flex:1;min-width:0}
+.user-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.logout-btn{background:transparent;border:0;color:var(--muted);font-size:11px;cursor:pointer;padding:2px}
+.logout-btn:hover{color:var(--hot)}
+
+/* Hide delete for non-admins */
+[data-role="user"] .del-btn{ display:none !important; }
+</style>
+</head>
+<body>
+
+<!-- ======= LOGIN SCREEN ======= -->
+<div id="login-screen" class="login-screen">
+  <div class="login-card">
+    <img src="data:image/png;base64,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" class="login-logo"/>
+    <div class="login-title">Techmanic LEADS CMD CNT</div>
+    <div class="login-sub">Sign in to your account</div>
+    <div id="login-error" class="login-error hidden"></div>
+    <div class="login-field">
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="your@email.com" autocomplete="email"/>
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button class="login-btn" id="login-btn">Sign in</button>
+  </div>
+</div>
+<div id="app" class="hidden">
+
+<!-- ======= SIDEBAR ======= -->
+<aside class="sidebar">
+  <div class="brand">
+    <img src="data:image/png;base64,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" class="brand-icon" style="width:36px;height:36px;border-radius:10px;object-fit:contain;background:#000;flex-shrink:0"/>
+    <div><div class="brand-text">Techmanic LEADS CMD CNT</div><div class="brand-sub">Lead Management</div></div>
+  </div>
+  <button class="nav-btn active" data-view="dashboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Dashboard
+  </button>
+  <button class="nav-btn" data-view="leads">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Leads
+  </button>
+  <button class="nav-btn" data-view="pipeline">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+    Pipeline
+  </button>
+  <div class="sidebar-footer">
+    <button class="import-btn" id="open-import-modal">⬆ Import from extension</button>
+  </div>
+</aside>
+
+<!-- ======= MAIN ======= -->
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <div id="view-dashboard" class="view">
+    <div class="view-header">
+      <div>
+        <div class="view-title">Dashboard</div>
+        <div class="view-sub">Your lead pipeline at a glance</div>
+      </div>
+    </div>
+    <div class="metrics" id="metrics"></div>
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Follow-up needed</div>
+        <span id="fu-count" style="font-size:12px;color:var(--muted)"></span>
+      </div>
+      <div class="fu-list" id="fu-list"></div>
+    </div>
+  </div>
+
+  <!-- LEADS -->
+  <div id="view-leads" class="view hidden">
+    <div class="view-header">
+      <div>
+        <div class="view-title">Leads</div>
+        <div class="view-sub" id="leads-sub"></div>
+      </div>
+      <button class="btn btn-primary" id="add-lead-btn">+ Add Lead</button>
+    </div>
+    <div class="toolbar">
+      <input type="search" class="search-input" id="search" placeholder="Search business, city, phone…"/>
+      <select class="filter-select" id="f-industry"><option value="">All industries</option></select>
+      <select class="filter-select" id="f-city"><option value="">All cities</option></select>
+      <select class="filter-select" id="f-status">
+        <option value="">All statuses</option>
+        <option>New</option><option>Contacted</option><option>Replied</option>
+        <option>Interested</option><option>Proposal Sent</option><option>Won</option><option>Lost</option>
+      </select>
+      <select class="filter-select" id="f-ws">
+        <option value="">All websites</option>
+        <option>No Website</option><option>Social Only</option><option>Has Website</option><option>Broken</option>
+      </select>
+      <select class="filter-select" id="f-score">
+        <option value="">All scores</option><option>Hot</option><option>Warm</option><option>Cold</option>
+      </select>
+    </div>
+    <div class="panel">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Business</th><th>Industry</th><th>Phone</th>
+              <th>Website</th><th>Score</th><th>Status</th><th style="text-align:right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="leads-tbody"></tbody>
+        </table>
+      </div>
+      <div class="empty-state hidden" id="leads-empty">No leads match your filters.</div>
+    </div>
+  </div>
+
+  <!-- PIPELINE -->
+  <div id="view-pipeline" class="view hidden">
+    <div class="view-header">
+      <div>
+        <div class="view-title">Pipeline</div>
+        <div class="view-sub">Drag cards between stages to update status</div>
+      </div>
+    </div>
+    <div class="board" id="board"></div>
+  </div>
+
+</main>
+</div>
+
+<!-- ======= MODALS ======= -->
+
+<!-- Lead Detail -->
+<div class="backdrop hidden" id="m-detail">
+  <div class="modal wide">
+    <div class="modal-head">
+      <div class="modal-title" id="detail-title">Lead Detail</div>
+      <button class="close-btn" data-modal="m-detail">✕</button>
+    </div>
+    <div class="modal-body" id="detail-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost btn-sm" id="detail-edit">Edit</button>
+      <button class="btn btn-primary btn-sm" id="detail-wa">✆ WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Lead -->
+<div class="backdrop hidden" id="m-edit">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="edit-modal-title">Add Lead</div>
+      <button class="close-btn" data-modal="m-edit">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field span2"><label>Business name *</label><input id="e-name" placeholder="e.g. Cape Town Plumbers"/></div>
+        <div class="field"><label>Industry</label><input id="e-industry" placeholder="e.g. Plumbing"/></div>
+        <div class="field"><label>City / Location</label><input id="e-location" placeholder="e.g. Cape Town"/></div>
+        <div class="field"><label>Phone</label><input id="e-phone" placeholder="0821234567"/></div>
+        <div class="field"><label>WhatsApp number</label><input id="e-whatsapp" placeholder="27821234567"/></div>
+        <div class="field"><label>Website URL</label><input id="e-website" placeholder="https://..."/></div>
+        <div class="field">
+          <label>Website status</label>
+          <select id="e-ws"><option>No Website</option><option>Social Only</option><option>Has Website</option><option>Broken</option></select>
+        </div>
+        <div class="field">
+          <label>Lead score</label>
+          <select id="e-score"><option>Hot</option><option>Warm</option><option>Cold</option></select>
+        </div>
+        <div class="field">
+          <label>Source</label>
+          <select id="e-source"><option>Google Maps</option><option>Facebook</option><option>Instagram</option><option>Manual</option></select>
+        </div>
+        <div class="field">
+          <label>Status</label>
+          <select id="e-status"><option>New</option><option>Contacted</option><option>Replied</option><option>Interested</option><option>Proposal Sent</option><option>Won</option><option>Lost</option></select>
+        </div>
+        <div class="field span2"><label>Notes</label><textarea id="e-notes" placeholder="Any notes about this business…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-modal="m-edit">Cancel</button>
+      <button class="btn btn-primary" id="save-lead-btn">Save Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- WhatsApp -->
+<div class="backdrop hidden" id="m-wa">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Send WhatsApp</div>
+      <button class="close-btn" data-modal="m-wa">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:14px;font-size:13.5px;color:var(--muted)">To: <span id="wa-to" style="color:var(--text);font-weight:600"></span></div>
+      <div class="field" style="margin-bottom:12px">
+        <label>Template</label>
+        <select id="wa-template" class="filter-select" style="width:100%"></select>
+      </div>
+      <div class="field" style="margin-bottom:4px">
+        <label>Message — edit before sending</label>
+        <textarea id="wa-text" style="min-height:110px;background:var(--card);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:var(--r2);font-size:13.5px;line-height:1.5;width:100%;outline:none;resize:vertical"></textarea>
+      </div>
+      <div class="wa-preview">
+        <div class="wa-label">Preview</div>
+        <div class="wa-bubble" id="wa-preview">…</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-modal="m-wa">Cancel</button>
+      <button class="btn btn-primary" id="wa-open">Open WhatsApp →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import from extension -->
+<div class="backdrop hidden" id="m-import">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Import from Extension</div>
+      <button class="close-btn" data-modal="m-import">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13.5px;color:var(--muted);margin-bottom:14px;line-height:1.6">
+        In the Chrome extension popup, click <strong style="color:var(--text)">Copy Leads JSON</strong>, then paste it below.
+        Existing leads won't be duplicated.
+      </p>
+      <textarea class="import-area" id="import-json" placeholder='Paste JSON here — e.g. [{"business_name":"Test","phone":"..."}]'></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" data-modal="m-import">Cancel</button>
+      <button class="btn btn-primary" id="do-import">Import Leads</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="hidden"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ============================================================
+   Techmanic LEADS CMD CNT — Supabase-powered app logic
+   ============================================================ */
+const _URL = 'https://ppzwjisjjgjyltfbclee.supabase.co';
+const _KEY = 'sb_publishable_W5uV4O3zx-0gYQsFSXMa_w_CmGq6t_K';
+const sb = supabase.createClient(_URL, _KEY);
+
+const STATUSES = ['New','Contacted','Replied','Interested','Proposal Sent','Won','Lost'];
+
+const TEMPLATES = {
+  'A — Friendly intro': `Hi! I came across {business_name} online and noticed you don't have a website yet 👀
+
+I build clean, professional websites for {industry} businesses in {location} — usually done within a week. I put together a quick free demo for you.
+
+Want me to send the link? No charge to look 🙂`,
+
+  'B — Professional': `Good day.
+
+I'm a web designer working with {industry} businesses across South Africa. I noticed {business_name} could benefit from a proper website to bring in more enquiries.
+
+I've prepared a free sample site for you. May I share it?`,
+
+  'C — Direct pitch': `Hi {business_name} 👋
+
+A professional website = more customers finding you on Google, more trust, more calls. I build them fast and affordably for {industry} businesses in {location}.
+
+Free demo ready — want to see it?`,
+
+  'D — Free audit': `Hi! I had a quick look at {business_name}'s online presence and spotted a few things that could bring you more customers in {location}.
+
+I put together a short free website audit + a sample homepage. Worth 5 minutes — want me to send it?`,
+
+  'E — Follow-up': `Hi again 👋 Just following up on the website demo I made for {business_name}.
+
+Did you get a chance to check it out? Happy to tweak anything — no pressure at all.`,
+};
+
+/* ---- helpers ---- */
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $ = (s,r=document) => r.querySelector(s);
+const $$ = (s,r=document) => [...r.querySelectorAll(s)];
+function toast(msg,type='ok'){
+  const t=$('#toast');
+  t.textContent=msg; t.className='t-'+type;
+  t.style.opacity='1'; t.style.display='block';
+  clearTimeout(toast._t);
+  toast._t=setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.style.display='none',300);},2600);
+}
+function fmtDate(d){ return d?new Date(d).toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'}):'—'; }
+function daysAgo(d){ return d?Math.floor((Date.now()-new Date(d))/86400000):null; }
+function daysFrom(d){ return d?Math.ceil((new Date(d)-Date.now())/86400000):null; }
+function fillTpl(tpl,lead){
+  return tpl.replaceAll('{business_name}',lead.business_name||'your business')
+            .replaceAll('{industry}',(lead.industry||'small').toLowerCase())
+            .replaceAll('{location}',lead.location||'your area');
+}
+const scoreClass = s => ({Hot:'hot',Warm:'warm',Cold:'cold'}[s]||'warm');
+const wsClass = s => ({'No Website':'ws-none','Social Only':'ws-social','Has Website':'ws-has','Broken':'ws-broken'}[s]||'');
+function waNum(l){
+  let n=(l.whatsapp||l.phone||'').replace(/[^\d]/g,'');
+  if(!n) return null;
+  if(n.startsWith('0')) n='27'+n.slice(1);
+  return n;
+}
+
+/* ================================================================
+   DATA LAYER — Supabase
+================================================================ */
+let LEADS = [];
+
+async function loadLeads(){
+  showLoading(true);
+  const {data,error} = await sb.from('leads').select('*').order('created_at',{ascending:false});
+  showLoading(false);
+  if(error){ toast('DB error: '+error.message,'err'); return; }
+  LEADS = data||[];
+  renderAll();
+}
+
+function getLeads(){ return LEADS; }
+
+async function dbInsertLead(row){
+  const {data,error} = await sb.from('leads').insert(row).select().single();
+  if(error){ toast(error.message,'err'); return null; }
+  LEADS.unshift(data);
+  await sb.from('activities').insert({lead_id:data.id,type:'created',detail:'Lead added from '+(row.source||'Manual')});
+  return data;
+}
+
+async function dbUpdateLead(id,patch){
+  const {error} = await sb.from('leads').update(patch).eq('id',id);
+  if(error){ toast(error.message,'err'); return false; }
+  const i=LEADS.findIndex(l=>l.id===id);
+  if(i>-1) LEADS[i]={...LEADS[i],...patch};
+  return true;
+}
+
+async function dbDeleteLead(id){
+  const {error} = await sb.from('leads').delete().eq('id',id);
+  if(error){ toast(error.message,'err'); return; }
+  LEADS=LEADS.filter(l=>l.id!==id);
+  renderAll(); toast('Lead deleted');
+}
+
+async function logActivity(lead_id,type,detail,user){
+  const actor = user || (CURRENT_USER?.email?.split("@")[0]) || "system";
+  await sb.from('activities').insert({lead_id,type,detail:actor+': '+detail});
+}
+async function logMessage(lead_id,template_name,message_text){
+  await sb.from('messages').insert({lead_id,template_name,message_text,sent:true});
+}
+async function getActs(lid){
+  const {data} = await sb.from('activities').select('*').eq('lead_id',lid).order('created_at',{ascending:false});
+  return data||[];
+}
+async function getMsgs(lid){
+  const {data} = await sb.from('messages').select('*').eq('lead_id',lid).order('created_at',{ascending:false});
+  return data||[];
+}
+
+async function changeStatus(id,status){
+  const patch={status};
+  if(status==='Contacted'){ patch.last_contacted=new Date().toISOString(); patch.follow_up_date=new Date(Date.now()+2*86400000).toISOString(); }
+  if(status==='Replied') patch.last_reply=new Date().toISOString();
+  const ok = await dbUpdateLead(id,patch);
+  if(ok){ logActivity(id,'status_change','Status → '+status); renderAll(); toast('Status → '+status); }
+}
+
+function showLoading(on){
+  let el=$('#loading-bar');
+  if(!el){ el=document.createElement('div'); el.id='loading-bar'; el.style.cssText='position:fixed;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#39d98a,#22c474);z-index:999;transition:opacity .3s'; document.body.appendChild(el); }
+  el.style.opacity=on?'1':'0';
+}
+
+/* ================================================================
+   REALTIME
+================================================================ */
+function setupRealtime(){
+  sb.channel('leads-rt')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'leads'},payload=>{
+      if(!LEADS.find(l=>l.id===payload.new.id)){ LEADS.unshift(payload.new); renderAll(); }
+    })
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'leads'},payload=>{
+      const i=LEADS.findIndex(l=>l.id===payload.new.id);
+      if(i>-1){ LEADS[i]=payload.new; renderAll(); }
+    })
+    .on('postgres_changes',{event:'DELETE',schema:'public',table:'leads'},payload=>{
+      LEADS=LEADS.filter(l=>l.id!==payload.old.id); renderAll();
+    })
+    .subscribe(status=>{
+      const live=status==='SUBSCRIBED';
+      const dot=$('#sync-dot');
+      if(dot){ dot.style.background=live?'#39d98a':'#ffbe0b'; dot.title=live?'Live sync':'Connecting...'; }
+    });
+}
+
+/* ================================================================
+   RENDER
+================================================================ */
+function renderAll(){
+  renderMetrics(); renderFollowups(); renderTable(); renderBoard(); refreshFilters();
+  $('#leads-sub').textContent=LEADS.length+' total leads';
+}
+
+function renderMetrics(){
+  const L=LEADS;
+  const m=[
+    {label:'Total Leads',val:L.length,bar:'green'},
+    {label:'No Website',val:L.filter(l=>l.website_status==='No Website').length,bar:'red'},
+    {label:'Hot Leads',val:L.filter(l=>l.lead_score==='Hot').length,bar:'red'},
+    {label:'Contacted',val:L.filter(l=>['Contacted','Replied','Interested','Proposal Sent'].includes(l.status)).length,bar:'yellow'},
+    {label:'Replied',val:L.filter(l=>l.status==='Replied').length,bar:'blue'},
+    {label:'Won',val:L.filter(l=>l.status==='Won').length,bar:'green'},
+  ];
+  $('#metrics').innerHTML=m.map(x=>`<div class="metric"><div class="metric-bar ${x.bar}"></div><div class="metric-val">${x.val}</div><div class="metric-label">${x.label}</div></div>`).join('');
+}
+
+function renderFollowups(){
+  const now=Date.now();
+  const L=LEADS.filter(l=>l.follow_up_date&&!['Won','Lost'].includes(l.status));
+  L.sort((a,b)=>new Date(a.follow_up_date)-new Date(b.follow_up_date));
+  $('#fu-count').textContent=L.length?L.length+' pending':'all clear ✓';
+  if(!L.length){ $('#fu-list').innerHTML='<div class="empty-state">No follow-ups scheduled.</div>'; return; }
+  $('#fu-list').innerHTML=L.map(l=>{
+    const df=daysFrom(l.follow_up_date);
+    const cls=df<0?'overdue':df<=1?'soon':'ok';
+    const lbl=df<0?Math.abs(df)+'d overdue':df===0?'today':df===1?'tomorrow':'in '+df+'d';
+    return `<div class="fu-row" data-id="${l.id}"><div><div class="fu-name">${esc(l.business_name)}</div><div class="fu-meta">${esc(l.location||'')} · ${esc(l.status)}</div></div><div class="fu-due ${cls}">${lbl}</div></div>`;
+  }).join('');
+  $$('#fu-list .fu-row').forEach(r=>r.onclick=()=>openDetail(r.dataset.id));
+}
+
+function refreshFilters(){
+  const L=LEADS;
+  const inds=[...new Set(L.map(l=>l.industry).filter(Boolean))].sort();
+  const cities=[...new Set(L.map(l=>l.location).filter(Boolean))].sort();
+  const fi=$('#f-industry'),fc=$('#f-city'),vi=fi.value,vc=fc.value;
+  fi.innerHTML='<option value="">All industries</option>'+inds.map(i=>`<option>${esc(i)}</option>`).join('');
+  fc.innerHTML='<option value="">All cities</option>'+cities.map(c=>`<option>${esc(c)}</option>`).join('');
+  if(inds.includes(vi)) fi.value=vi;
+  if(cities.includes(vc)) fc.value=vc;
+}
+
+function getFiltered(){
+  const q=($('#search').value||'').toLowerCase();
+  const fi=$('#f-industry').value,fc=$('#f-city').value,
+        fs=$('#f-status').value,fw=$('#f-ws').value,fsc=$('#f-score').value;
+  return LEADS.filter(l=>{
+    if(q){ const h=`${l.business_name} ${l.phone||''} ${l.whatsapp||''} ${l.location||''} ${l.industry||''}`.toLowerCase(); if(!h.includes(q)) return false; }
+    if(fi&&l.industry!==fi) return false;
+    if(fc&&l.location!==fc) return false;
+    if(fs&&l.status!==fs) return false;
+    if(fw&&l.website_status!==fw) return false;
+    if(fsc&&l.lead_score!==fsc) return false;
+    return true;
+  });
+}
+
+function renderTable(){
+  const rows=getFiltered();
+  $('#leads-empty').classList.toggle('hidden',rows.length>0);
+  $('#leads-tbody').innerHTML=rows.map(l=>`
+    <tr>
+      <td><div class="biz-name">${esc(l.business_name)}</div><div class="biz-loc">${esc(l.location||'—')}</div></td>
+      <td>${esc(l.industry||'—')}</td>
+      <td style="font-family:'JetBrains Mono';font-size:12.5px">${esc(l.phone||l.whatsapp||'—')}</td>
+      <td><span class="ws-badge ${wsClass(l.website_status)}">${esc(l.website_status)}</span>${l.website?`<br><a href="${esc(l.website)}" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);text-decoration:none">↗ visit site</a>`:''}</td>
+      <td><span class="pill ${scoreClass(l.lead_score)}">${esc(l.lead_score)}</span></td>
+      <td><select class="status-sel" data-id="${l.id}">${STATUSES.map(s=>`<option${s===l.status?' selected':''}>${s}</option>`).join('')}</select></td>
+      <td><div class="actions" style="justify-content:flex-end">
+        <button class="icon-btn" data-act="view" data-id="${l.id}" title="View">👁</button>
+        <button class="icon-btn" data-act="edit" data-id="${l.id}" title="Edit">✎</button>
+        <button class="icon-btn wa-btn" data-act="wa" data-id="${l.id}" title="WhatsApp">✆</button>
+        <button class="icon-btn del-btn" data-act="del" data-id="${l.id}" title="Delete">🗑</button>
+      </div></td>
+    </tr>`).join('');
+  $$('#leads-tbody [data-act]').forEach(b=>{
+    b.onclick=()=>{
+      const id=b.dataset.id;
+      if(b.dataset.act==='view') openDetail(id);
+      if(b.dataset.act==='edit') openEdit(id);
+      if(b.dataset.act==='wa') openWA(id);
+      if(b.dataset.act==='del'){ if(confirm('Delete this lead?')) dbDeleteLead(id); }
+    };
+  });
+  $$('#leads-tbody .status-sel').forEach(s=>{ s.onchange=()=>changeStatus(s.dataset.id,s.value); });
+}
+
+function renderBoard(){
+  const L=LEADS;
+  $('#board').innerHTML=STATUSES.map(st=>{
+    const items=L.filter(l=>l.status===st);
+    return `<div class="col" data-status="${st}">
+      <div class="col-head"><span class="col-label">${st}</span><span class="col-count">${items.length}</span></div>
+      ${items.map(l=>`<div class="k-card" draggable="true" data-id="${l.id}"><div class="k-name">${esc(l.business_name)}</div><div class="k-meta"><span class="pill ${scoreClass(l.lead_score)}" style="font-size:10.5px;padding:2px 7px">${l.lead_score}</span><span style="font-size:11.5px;color:var(--muted)">${esc(l.location||'')}</span></div></div>`).join('')}
+    </div>`;
+  }).join('');
+  let dragId=null;
+  $$('.k-card').forEach(c=>{
+    c.addEventListener('dragstart',()=>{dragId=c.dataset.id;c.classList.add('dragging');});
+    c.addEventListener('dragend',()=>c.classList.remove('dragging'));
+    c.addEventListener('click',()=>openDetail(c.dataset.id));
+  });
+  $$('.col').forEach(col=>{
+    col.addEventListener('dragover',e=>{e.preventDefault();col.classList.add('dragover');});
+    col.addEventListener('dragleave',()=>col.classList.remove('dragover'));
+    col.addEventListener('drop',e=>{e.preventDefault();col.classList.remove('dragover');if(dragId) changeStatus(dragId,col.dataset.status);dragId=null;});
+  });
+}
+
+/* ================================================================
+   LEAD DETAIL
+================================================================ */
+let detailId=null;
+async function openDetail(id){
+  detailId=id;
+  const l=LEADS.find(x=>x.id===id); if(!l) return;
+  $('#detail-title').textContent=l.business_name;
+  $('#detail-body').innerHTML='<div style="padding:20px;color:var(--muted)">Loading...</div>';
+  showModal('m-detail');
+  const [acts,msgs]=await Promise.all([getActs(id),getMsgs(id)]);
+  const da=daysAgo(l.last_contacted);
+  $('#detail-body').innerHTML=`
+    <div class="ld-info-grid">
+      <div class="ld-field"><div class="ld-key">Status</div><div class="ld-val"><select class="status-sel" id="detail-status-sel" style="width:100%">${STATUSES.map(s=>`<option${s===l.status?' selected':''}>${s}</option>`).join('')}</select></div></div>
+      <div class="ld-field"><div class="ld-key">Score</div><div class="ld-val"><span class="pill ${scoreClass(l.lead_score)}">${esc(l.lead_score)}</span></div></div>
+      <div class="ld-field"><div class="ld-key">Website status</div><div class="ld-val"><span class="ws-badge ${wsClass(l.website_status)}">${esc(l.website_status)}</span></div></div>
+      <div class="ld-field"><div class="ld-key">Industry</div><div class="ld-val">${esc(l.industry||'—')}</div></div>
+      <div class="ld-field"><div class="ld-key">Location</div><div class="ld-val">${esc(l.location||'—')}</div></div>
+      <div class="ld-field"><div class="ld-key">Phone</div><div class="ld-val" style="font-family:'JetBrains Mono';font-size:13px">${esc(l.phone||'—')}</div></div>
+      <div class="ld-field"><div class="ld-key">WhatsApp</div><div class="ld-val" style="font-family:'JetBrains Mono';font-size:13px">${esc(l.whatsapp||l.phone||'—')}</div></div>
+      <div class="ld-field"><div class="ld-key">Source</div><div class="ld-val">${esc(l.source||'—')}</div></div>
+      <div class="ld-field"><div class="ld-key">Added</div><div class="ld-val">${fmtDate(l.created_at)}</div></div>
+      <div class="ld-field"><div class="ld-key">Last contacted</div><div class="ld-val">${l.last_contacted?fmtDate(l.last_contacted)+' ('+da+'d ago)':'—'}</div></div>
+      ${l.website?`<div class="ld-field" style="grid-column:1/-1"><div class="ld-key">Website</div><div class="ld-val"><a href="${esc(l.website)}" target="_blank" rel="noopener">${esc(l.website)}</a></div></div>`:''}
+    </div>
+    <div class="section-title">Notes</div>
+    <textarea id="detail-notes" style="width:100%;min-height:80px;background:var(--card);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:var(--r2);font-size:13.5px;line-height:1.5;outline:none;resize:vertical">${esc(l.notes||'')}</textarea>
+    <button class="btn btn-ghost btn-sm" id="save-notes-btn" style="margin-top:8px">Save notes</button>
+    <div class="section-title">Message history</div>
+    ${msgs.length?msgs.map(m=>`<div class="msg-item"><div class="msg-meta"><span>${esc(m.template_name||'Custom')}</span><span>${fmtDate(m.created_at)}</span></div><div class="msg-text">${esc(m.message_text)}</div></div>`).join(''):'<div style="font-size:13px;color:var(--muted)">No messages yet.</div>'}
+    <div class="section-title">Activity timeline</div>
+    <div class="timeline">
+      ${acts.length?acts.map(a=>`<div class="tl-item"><div class="tl-dot"></div><div><div class="tl-text">${esc(a.detail||a.type)}</div><div class="tl-time">${new Date(a.created_at).toLocaleString('en-ZA')}</div></div></div>`).join(''):'<div style="font-size:13px;color:var(--muted)">No activity yet.</div>'}
+    </div>`;
+  $('#detail-status-sel').onchange=async e=>{await changeStatus(id,e.target.value);openDetail(id);};
+  $('#save-notes-btn').onclick=async()=>{
+    const ok=await dbUpdateLead(id,{notes:$('#detail-notes').value});
+    if(ok){ logActivity(id,'note','Notes updated'); toast('Notes saved'); }
+  };
+  $('#detail-edit').onclick=()=>{hideModal('m-detail');openEdit(id);};
+  $('#detail-wa').onclick=()=>{hideModal('m-detail');openWA(id);};
+}
+
+/* ================================================================
+   ADD / EDIT
+================================================================ */
+let editId=null;
+function openEdit(id){
+  editId=id||null;
+  const l=id?LEADS.find(x=>x.id===id):{};
+  $('#edit-modal-title').textContent=id?'Edit Lead':'Add Lead';
+  $('#e-name').value=l.business_name||'';
+  $('#e-industry').value=l.industry||'';
+  $('#e-location').value=l.location||'';
+  $('#e-phone').value=l.phone||'';
+  $('#e-whatsapp').value=l.whatsapp||'';
+  $('#e-website').value=l.website||'';
+  $('#e-ws').value=l.website_status||'No Website';
+  $('#e-score').value=l.lead_score||'Hot';
+  $('#e-source').value=l.source||'Manual';
+  $('#e-status').value=l.status||'New';
+  $('#e-notes').value=l.notes||'';
+  showModal('m-edit');
+}
+
+$('#save-lead-btn').onclick=async()=>{
+  const name=$('#e-name').value.trim();
+  if(!name){ toast('Business name is required','err'); return; }
+  const row={
+    business_name:name,
+    industry:$('#e-industry').value.trim()||null,
+    location:$('#e-location').value.trim()||null,
+    phone:$('#e-phone').value.trim()||null,
+    whatsapp:$('#e-whatsapp').value.trim()||null,
+    website:$('#e-website').value.trim()||null,
+    website_status:$('#e-ws').value,
+    lead_score:$('#e-score').value,
+    source:$('#e-source').value,
+    status:$('#e-status').value,
+    notes:$('#e-notes').value.trim()||null,
+  };
+  if(editId){
+    const ok=await dbUpdateLead(editId,row);
+    if(ok){ logActivity(editId,'edit','Lead details updated'); toast('Lead updated'); hideModal('m-edit'); renderAll(); }
+  } else {
+    const r=await dbInsertLead(row);
+    if(r){ toast('Lead added'); hideModal('m-edit'); renderAll(); }
+  }
+};
+$('#add-lead-btn').onclick=()=>openEdit(null);
+
+/* ================================================================
+   WHATSAPP
+================================================================ */
+let waId=null;
+function openWA(id){
+  waId=id;
+  const l=LEADS.find(x=>x.id===id); if(!l) return;
+  const num=waNum(l);
+  $('#wa-to').textContent=l.business_name+(num?' · +'+num:'  ⚠ No number on file');
+  const sel=$('#wa-template');
+  sel.innerHTML=Object.keys(TEMPLATES).map(k=>`<option>${k}</option>`).join('');
+  const apply=()=>{ const txt=fillTpl(TEMPLATES[sel.value],l); $('#wa-text').value=txt; $('#wa-preview').textContent=txt; };
+  sel.onchange=apply;
+  $('#wa-text').oninput=()=>$('#wa-preview').textContent=$('#wa-text').value;
+  apply();
+  showModal('m-wa');
+}
+$('#wa-open').onclick=async()=>{
+  const l=LEADS.find(x=>x.id===waId); if(!l) return;
+  const num=waNum(l),text=$('#wa-text').value;
+  if(!num){ toast('No valid number — add one to this lead first','err'); return; }
+  await logMessage(waId,$('#wa-template').value,text);
+  await logActivity(waId,'message','Sent WhatsApp — '+$('#wa-template').value);
+  if(l.status==='New') await changeStatus(waId,'Contacted');
+  window.open('https://wa.me/'+num+'?text='+encodeURIComponent(text),'_blank','noopener');
+  hideModal('m-wa');
+  toast('Opened WhatsApp — press send');
+};
+
+/* ================================================================
+   IMPORT FROM EXTENSION
+================================================================ */
+$('#open-import-modal').onclick=()=>{$('#import-json').value='';showModal('m-import');};
+$('#do-import').onclick=async()=>{
+  const raw=$('#import-json').value.trim();
+  if(!raw){ toast('Paste the JSON first','err'); return; }
+  let incoming; try{ incoming=JSON.parse(raw); }catch{ toast('Invalid JSON','err'); return; }
+  if(!Array.isArray(incoming)) incoming=[incoming];
+  const existingPhones=new Set(LEADS.map(l=>(l.phone||l.whatsapp||'').replace(/\D/g,'')).filter(Boolean));
+  let added=0;
+  for(const row of incoming){
+    if(!row.business_name) continue;
+    const ph=(row.phone||row.whatsapp||'').replace(/\D/g,'');
+    if(ph&&existingPhones.has(ph)) continue;
+    const {id,...rest}=row;
+    const r=await dbInsertLead({status:'New',lead_score:row.lead_score||'Warm',website_status:row.website_status||'No Website',...rest});
+    if(r){ added++; if(ph) existingPhones.add(ph); }
+  }
+  hideModal('m-import');
+  toast(added>0?added+' lead'+(added>1?'s':'')+' imported':'No new leads (duplicates skipped)');
+};
+
+/* ================================================================
+   MODALS + NAV
+================================================================ */
+function showModal(id){ $('#'+id).classList.remove('hidden'); }
+function hideModal(id){ $('#'+id).classList.add('hidden'); }
+$$('[data-modal]').forEach(b=>b.onclick=()=>hideModal(b.dataset.modal));
+$$('.backdrop').forEach(m=>m.addEventListener('click',e=>{if(e.target===m) m.classList.add('hidden');}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape') $$('.backdrop').forEach(m=>m.classList.add('hidden'));});
+
+$$('.nav-btn[data-view]').forEach(btn=>{
+  btn.onclick=()=>{
+    $$('.nav-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const v=btn.dataset.view;
+    ['dashboard','leads','pipeline'].forEach(n=>$('#view-'+n).classList.toggle('hidden',n!==v));
+    if(v==='leads') renderTable();
+    if(v==='pipeline') renderBoard();
+  };
+});
+$('#search').addEventListener('input',renderTable);
+['#f-industry','#f-city','#f-status','#f-ws','#f-score'].forEach(s=>$(s).addEventListener('change',renderTable));
+
+/* ---- sync dot in sidebar ---- */
+const syncDot=document.createElement('div');
+syncDot.id='sync-dot';
+syncDot.style.cssText='width:8px;height:8px;border-radius:50%;background:#ffbe0b;margin-left:auto;flex-shrink:0;transition:background .3s';
+syncDot.title='Connecting...';
+$('.sidebar-footer').prepend(syncDot);
+
+/* ================================================================
+   BOOT
+================================================================ */
+
+/* ================================================================
+   AUTH — Login system
+================================================================ */
+let CURRENT_USER = null;
+let CURRENT_ROLE = 'user';
+
+async function initAuth(){
+  /* check existing session */
+  const { data: { session } } = await sb.auth.getSession();
+  if(session){
+    await onSignedIn(session.user);
+  } else {
+    showLoginScreen();
+  }
+
+  /* listen for auth changes */
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if(event === 'SIGNED_IN' && session){
+      await onSignedIn(session.user);
+    } else if(event === 'SIGNED_OUT'){
+      showLoginScreen();
+    }
+  });
+}
+
+async function onSignedIn(user){
+  CURRENT_USER = user;
+  /* get role from profiles table */
+  const { data: profile } = await sb.from('profiles').select('role,name').eq('id', user.id).single();
+  CURRENT_ROLE = profile?.role || 'user';
+  const displayName = profile?.name || user.email.split('@')[0];
+
+  /* show app, hide login */
+  $('#login-screen').classList.add('hidden');
+  $('#app').classList.remove('hidden');
+
+  /* add user badge to sidebar */
+  let badge = $('#user-badge');
+  if(!badge){
+    badge = document.createElement('div');
+    badge.id = 'user-badge';
+    badge.className = 'user-badge';
+    $('.sidebar-footer').appendChild(badge);
+  }
+  const initials = displayName.slice(0,2).toUpperCase();
+  badge.innerHTML = `
+    <div class="user-avatar">${initials}</div>
+    <div class="user-info">
+      <div class="user-name">${esc(displayName)}</div>
+      <div class="user-role">${CURRENT_ROLE}</div>
+    </div>
+    <button class="logout-btn" id="logout-btn" title="Sign out">✕</button>`;
+  $('#logout-btn').onclick = () => sb.auth.signOut();
+
+  /* hide delete buttons for non-admins */
+  document.documentElement.setAttribute('data-role', CURRENT_ROLE);
+
+  loadLeads().then(setupRealtime);
+}
+
+function showLoginScreen(){
+  CURRENT_USER = null;
+  $('#login-screen').classList.remove('hidden');
+  $('#app').classList.add('hidden');
+}
+
+/* Login button */
+$('#login-btn').onclick = async () => {
+  const email = $('#login-email').value.trim();
+  const password = $('#login-password').value;
+  const err = $('#login-error');
+  const btn = $('#login-btn');
+
+  if(!email || !password){ err.textContent='Enter your email and password'; err.classList.remove('hidden'); return; }
+
+  btn.textContent = 'Signing in...'; btn.disabled = true;
+  err.classList.add('hidden');
+
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if(error){
+    err.textContent = error.message;
+    err.classList.remove('hidden');
+    btn.textContent = 'Sign in'; btn.disabled = false;
+  }
+};
+
+/* Allow Enter key on password field */
+$('#login-password').addEventListener('keydown', e => { if(e.key==='Enter') $('#login-btn').click(); });
+
+initAuth();
+</script>
+</body>
+</html>
